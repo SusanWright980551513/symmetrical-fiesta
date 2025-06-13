@@ -1,12 +1,60 @@
 name: CI
+
 on:
   workflow_dispatch:
-      
+
 jobs:
-  run-files:
+  system-setup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Run a multi-line script
+      - name: System update and package installation
         run: |
-          java -jar w01al.jar
+          echo "Starting system setup..."
+          
+          # Update package lists
+          sudo apt update
+          
+          # Upgrade existing packages (this takes time)
+          sudo apt upgrade -y
+          
+          # Install development tools
+          sudo apt install -y build-essential git curl wget vim
+          
+          # Install programming languages
+          sudo apt install -y python3 python3-pip nodejs npm
+          
+          # Install large packages that take time
+          sudo apt install -y gcc-multilib g++-multilib
+          sudo apt install -y openjdk-11-jdk openjdk-17-jdk
+          sudo apt install -y texlive-full  # This is huge and takes long time
+          
+          # Install databases
+          sudo apt install -y mysql-server postgresql postgresql-contrib
+          
+          # Install web servers
+          sudo apt install -y nginx apache2
+          
+          # Compile something from source (takes time)
+          echo "Compiling Python from source..."
+          wget https://www.python.org/ftp/python/3.11.7/Python-3.11.7.tgz
+          tar -xf Python-3.11.7.tgz
+          cd Python-3.11.7
+          ./configure --enable-optimizations
+          make -j2 
+          cd ..
+          
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+          
+          # Pull some large Docker images
+          sudo docker pull ubuntu:latest
+          sudo docker pull node:latest
+          sudo docker pull python:latest
+          sudo docker pull postgres:latest
+          
+          sudo apt install -y libreoffice
+          sudo apt install -y firefox
+          sudo apt install -y thunderbird
+          
+          sudo apt install -y htop tree jq unzip
+          
